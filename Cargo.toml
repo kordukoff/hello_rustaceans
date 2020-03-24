@@ -1,0 +1,32 @@
+[package]
+name = "hello_rustaceans"
+version = "0.1.0"
+authors = ["Dmitri Kordukoff <dmitri@kordukoff.ru>"]
+edition = "2018"
+license = "MIT/Apache-2.0"
+readme = "README.md"
+keywords = ["windows", "file", "overlapped"]
+repository = "https://github.com/kordukoff/hello_rustaceans"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+widestring = "0.4.0"
+chrono = "0.4"
+
+[dependencies.winapi]
+version = "0.3.8"
+features = [
+  "std",
+  "winbase",
+  "fileapi",
+  "handleapi",
+  "minwindef",
+  "ntdef",
+  "synchapi",
+  "winerror",
+  "errhandlingapi",
+  "debugapi",
+]
+
+[target.'cfg(windows)'.dependencies]
