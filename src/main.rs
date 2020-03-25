@@ -36,12 +36,19 @@ let op_promt = r#" test:
       break;
     }
     if("z"==filepath) {filepath = String::from("C:\\Users\\dkord\\Downloads\\tz_ricom.doc");}
+    else {
+      match FileWin32::getFullPath(&filepath) {
+        Err(ec) => { println!("{}", str_win32err(ec)); continue }
+        Ok(fp) => {  filepath=fp }
+      }
+    }
+    println!("{}", filepath);
     let mut thefile = FileWin32::new();
     match thefile.open(&filepath) {
       Err(ec) => { println!("{}", str_win32err(ec)); continue }
-      Ok(_)=>{ println!("{:?}", FileWin32::getFullPath(&filepath).0)}
+      Ok(_) => { }
     }
-
+    //println!("{}, {} bytes", filepath, thefile.getSize());
     loop {
       let uinp: String = gets(op_promt);
       match uinp.to_lowercase().as_ref() {
