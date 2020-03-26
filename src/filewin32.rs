@@ -52,7 +52,7 @@ impl FileWin32 {
     self.close();
     self.hndl_ = newhdl;
   }
-  pub fn getFullPath(rname: &String) -> Result<String, DWORD> {
+  pub fn getFullPath(rname: &String) -> Result<(String, isize), DWORD> {
     let mut tbuffer: Vec<u16> = Vec::with_capacity(5);
     tbuffer.resize(MAX_PATH, 0);
     let filePath: LPWSTR = tbuffer.as_mut_ptr();
@@ -72,7 +72,13 @@ impl FileWin32 {
           return Err(0)
         }
       }
-      Ok(U16String::from_ptr_str(tbuffer.as_ptr()).to_string_lossy())
+      let mut offset = -1isize;
+      if(null_mut()!=filePart) {
+        offset = (((filePart as *const _ as usize)-(filePath as *const _ as usize)) 
+                    / mem::size_of::<u16>()) as isize
+      }
+      //println!("{:#?}, {:#?}, {:#?}", filePath, filePart, offset);
+      Ok((U16String::from_ptr_str(tbuffer.as_ptr()).to_string_lossy(), offset))
     }
   }
   pub fn getSize(&self) -> u64 {

@@ -39,7 +39,7 @@ let op_promt = r#" test:
     else {
       match FileWin32::getFullPath(&filepath) {
         Err(ec) => { println!("{}", str_win32err(ec)); continue }
-        Ok(fp) => {  filepath=fp }
+        Ok(fp) => {  filepath=fp.0 }
       }
     }
     println!("{}", filepath);
@@ -48,7 +48,7 @@ let op_promt = r#" test:
       Err(ec) => { println!("{}", str_win32err(ec)); continue }
       Ok(_) => { }
     }
-    //println!("{}, {} bytes", filepath, thefile.getSize());
+    println!("{} opened, {} bytes", filepath, thefile.getSize());
     loop {
       let uinp: String = gets(op_promt);
       match uinp.to_lowercase().as_ref() {
