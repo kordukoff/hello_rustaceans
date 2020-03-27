@@ -27,6 +27,7 @@ features = [
   "winerror",
   "errhandlingapi",
   "debugapi",
+  "ioapiset",
 ]
 
 [target.'cfg(windows)'.dependencies]

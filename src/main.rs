@@ -1,9 +1,11 @@
 #![windows_subsystem = "console"]
 
-//#![allow(unused_imports)]
-//#![allow(dead_code)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 #![allow(unused_parens)]
 #![allow(non_snake_case)]
+#![allow(unused_mut)]
+#![allow(unused_variables)]
 
 extern crate winapi;
 //extern crate widestring;
@@ -35,7 +37,7 @@ let op_promt = r#" test:
     if(""==filepath) {
       break;
     }
-    if("z"==filepath) {filepath = String::from("C:\\Users\\dkord\\Downloads\\tz_ricom.doc");}
+    if("z"==filepath) {filepath = String::from("C:\\Users\\dkord\\Downloads\\wix311.exe");}
     else {
       match FileWin32::getFullPath(&filepath) {
         Err(ec) => { println!("{}", str_win32err(ec)); continue }
@@ -48,15 +50,40 @@ let op_promt = r#" test:
       Err(ec) => { println!("{}", str_win32err(ec)); continue }
       Ok(_) => { }
     }
-    println!("{} opened, {} bytes", filepath, thefile.getSize());
+    let mut flsize = thefile.getSize();
+    println!("{} opened, {} bytes", filepath, flsize);
+    if(flsize<=0) {
+      continue;
+    }
+    let mut tests: Vec<Box<OvlReader>> = Vec::with_capacity(64);
     loop {
       let uinp: String = gets(op_promt);
       match uinp.to_lowercase().as_ref() {
         "0" | "" => { break }
         "w" => { println!("{}", time_mark()); unsafe { SleepEx(1000, TRUE); } },
+        "2" => {
+            match thefile.read(0, flsize as u64, flsize as u64, Ovl_op_complete) {
+              Err(ec) => { println!("{}", str_win32err(ec)) }
+              Ok(rdr) => { tests.push(rdr) }
+            }
+          },
+        "1" => {
+            match thefile.read(0, flsize as u64, 4096u64, Ovl_op_complete) {
+              Err(ec) => { println!("{}", str_win32err(ec)) }
+              Ok(rdr) => { tests.push(rdr) }
+            }
+          },
+        "c" => {
+            tests.clear()
+          },
+
         _ => { }
       }
     }
   }
+}
+
+fn Ovl_op_complete(callee: *const OvlReader) {
+  println!("{}, IO completed.", time_mark())
 }
 
