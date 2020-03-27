@@ -211,7 +211,7 @@ impl OvlReader {
         let ovlptr = self.ovls_.as_ptr();
         for it in 0..self.ovls_.len()-1 {
           let ovl : *const TOVL = ovlptr.add(it);
-          if null_mut()==(*ovl).host_ {
+          if null_mut()!=(*ovl).host_ {
             CancelIoEx(self.hndl_, ovl as *mut OVERLAPPED);
           }
         }
