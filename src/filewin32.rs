@@ -125,7 +125,7 @@ impl FileWin32 {
     }
     let chunk_quantity : usize = ((size+chnk_sz-1)/chnk_sz) as usize;
     let mut newrdr = Box::new(OvlReader::new(self.raw(), size as usize, chunk_quantity, compl_proc));
-    println!("Buffer allocated, start reading");
+    println!("{}, Buffer allocated, start reading", time_mark());
     let mut left = size as usize;
     let mut off = offset;
     let mut mem_off = 0usize;

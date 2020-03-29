@@ -57,26 +57,19 @@ let op_promt = r#" test:
     }
     let mut tests: Vec<Box<OvlReader>> = Vec::with_capacity(64);
     loop {
+      fn start_read(thefile: &FileWin32, tests: &mut Vec<Box<OvlReader>>, size:isize, chunk:isize) {
+        match thefile.read(0, size as u64, chunk as u64, Ovl_op_complete) {
+          Err(ec) => { println!("{}", str_win32err(ec)) }
+          Ok(rdr) => { tests.push(rdr) }
+        }
+      }
       let uinp: String = gets(op_promt);
       match uinp.to_lowercase().as_ref() {
         "0" | "" => { break }
         "w" => { println!("{}", time_mark()); unsafe { SleepEx(1000, TRUE); } },
-        "2" => {
-            match thefile.read(0, flsize as u64, flsize as u64, Ovl_op_complete) {
-              Err(ec) => { println!("{}", str_win32err(ec)) }
-              Ok(rdr) => { tests.push(rdr) }
-            }
-          },
-        "1" => {
-            match thefile.read(0, flsize as u64, 4096u64, Ovl_op_complete) {
-              Err(ec) => { println!("{}", str_win32err(ec)) }
-              Ok(rdr) => { tests.push(rdr) }
-            }
-          },
-        "c" => {
-            tests.clear()
-          },
-
+        "2" => { start_read(&thefile, &mut tests, flsize, flsize) },
+        "1" => { start_read(&thefile, &mut tests, flsize, 4096) },
+        "c" => { tests.clear() },
         _ => { }
       }
     }
